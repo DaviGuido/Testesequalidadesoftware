@@ -545,6 +545,18 @@ describe('E-Commerce API smoke test', () => {
     assert.equal(response.body.user.id, userId);
   });
 
+  it('rejects viewing another user by id', async () => {
+  const response = await request(app)
+    .get(`/users/${userId}`)
+    .set('Authorization', `Bearer ${secondToken}`);
+
+  assert.equal(response.status, 403);
+  assert.equal(
+    response.body.message,
+    'You can only access your own resources'
+  );
+});
+
   it('updates a user', async () => {
     const response = await request(app)
       .put(`/users/${userId}`)

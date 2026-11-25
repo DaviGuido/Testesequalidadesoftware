@@ -20,7 +20,7 @@ router.get('/', authMiddleware.requireAuth, async (req, res) => {
   }
 });
 
-router.get('/:id', authMiddleware.requireAuth, async (req, res) => {
+router.get('/:id', authMiddleware.requireAuth, authMiddleware.requireSameUser('id'), async (req, res) => {
   const id = Number(req.params.id);
 
   try {
