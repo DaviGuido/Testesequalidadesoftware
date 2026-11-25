@@ -1,0 +1,23 @@
+PATCH - PRIMEIROS TESTES UNITARIOS DO P2
+
+Conteudo:
+- package.json: adiciona o comando test:unit.
+- routes/payments.routes.js: passa a utilizar funcoes auxiliares isoladas.
+- utils/checkoutUtils.js: contem funcoes puras para configuracao e montagem dos itens de checkout.
+- test/unit/checkoutUtils.test.js: adiciona 10 testes unitarios.
+
+COMO APLICAR
+1. Faça uma cópia de segurança da pasta do projeto.
+2. Extraia este ZIP diretamente dentro da pasta fullstack-ecommerce-app-main, mantendo a estrutura de pastas.
+3. Autorize substituir package.json e routes/payments.routes.js.
+4. Não substitua nem apague .env, node_modules ou client/node_modules.
+5. No terminal, confirme que está na pasta fullstack-ecommerce-app-main.
+6. Execute: npm.cmd run test:unit
+7. Em seguida execute: npm.cmd test
+
+RESULTADOS ESPERADOS
+- A suíte isolada deve apresentar 10 passing.
+- A suíte completa deverá incluir os 40 testes de API existentes e os 10 novos testes unitários (50 testes no total), desde que o ambiente continue igual e a execução não revele outra falha.
+
+OBSERVAÇÃO
+O ambiente de preparação deste patch não possui as dependências npm instaladas, então os testes Mocha/Chai ainda precisam ser executados no computador do grupo. As funções auxiliares passaram por verificações independentes de lógica e os três arquivos JavaScript foram verificados sintaticamente.
