@@ -9,7 +9,8 @@
     "dev": "nodemon server.js",
     "db:schema": "node scripts/apply-schema.js",
     "build": "npm --prefix client ci --include=dev && npm --prefix client run build && npm --prefix client prune --omit=dev",
-    "test:unit": "mocha \"test/unit/**/*.test.js\""
+    "test:unit": "mocha \"test/unit/**/*.test.js\"",
+    "test:e2e": "mocha \"test/e2e/**/*.e2e.test.js\" --timeout 45000"
   },
   "keywords": [],
   "author": "",

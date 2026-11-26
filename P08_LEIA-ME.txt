@@ -1,0 +1,42 @@
+P08 - AUTOMACAO DE TESTES COM SELENIUM
+
+CONTEUDO
+- test/e2e/storefront.e2e.test.js: quatro testes ponta a ponta usando o frontend real.
+
+PRE-REQUISITOS
+- Node.js 22 ou superior.
+- Dependencias do projeto instaladas (npm install na raiz).
+- selenium-webdriver 4.51.0 ja incluido no package.json do projeto publicado.
+- Google Chrome instalado.
+- PostgreSQL e banco local do projeto ativos.
+- Backend iniciado em http://localhost:4001.
+- Frontend iniciado em http://localhost:5173.
+- Pelo menos um produto ficticio cadastrado; para UI-03 e UI-04, estoque minimo de 2.
+
+INSTALACAO
+1. Extraia o ZIP na raiz da pasta fullstack-ecommerce-app-main, mantendo a estrutura de pastas.
+2. Abra o package.json da raiz.
+3. Dentro de "scripts", acrescente esta entrada (com virgula na linha anterior):
+   "test:e2e": "mocha \"test/e2e/**/*.e2e.test.js\" --timeout 45000"
+4. Salve o package.json.
+5. Mantenha backend e frontend executando em seus terminais.
+6. Abra um terceiro terminal na raiz e execute:
+   npm.cmd run test:e2e
+
+CENARIOS
+UI-01: cadastro e login pela interface.
+UI-02: consulta do catalogo e abertura dos detalhes de um produto.
+UI-03: inclusao de produto no carrinho e alteracao da quantidade.
+UI-04: tentativa de checkout e validacao da mensagem apresentada quando o Stripe nao esta configurado.
+
+OBSERVACAO SOBRE STRIPE
+UI-04 nao simula pagamento aprovado. A aplicacao deve informar que o Stripe nao esta configurado. O teste valida o tratamento dessa indisponibilidade na interface. A compra externa permanece indisponivel e CT-23 continua Bloqueado, conforme a execucao manual.
+
+EVIDENCIAS
+Se um teste falhar, o script tenta salvar uma captura de tela real em test-results/e2e/. As capturas so serao produzidas durante uma execucao efetiva que falhar.
+
+DADOS DE TESTE
+O script registra contas ficticias com enderecos @example.test. Nao use contas reais nem credenciais pessoais. As contas criadas ficam no banco local de teste e podem ser removidas ao final, se desejado.
+
+RESULTADO
+Nao declare os quatro cenarios aprovados antes de executar o comando e guardar a saida real do terminal. Registre o total de testes, os aprovados e as falhas observadas.
