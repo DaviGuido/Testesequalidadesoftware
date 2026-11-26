@@ -67,7 +67,7 @@ jobs:
         run: npm test
 
       - name: Install frontend dependencies
-        run: npm ci --prefix client
+        run: npx --yes npm@11.6.1 ci --prefix client
 
       - name: Build frontend
         run: npm run build --prefix client
