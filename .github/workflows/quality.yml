@@ -27,11 +27,14 @@ jobs:
           --health-retries 5
 
     env:
+      CI: true
       NODE_ENV: test
       PORT: 4001
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ecommerce_test
       JWT_SECRET: ci-only-secret-do-not-reuse
       CLIENT_ORIGIN: http://localhost:5173
+      E2E_BASE_URL: http://localhost:5173
+      E2E_API_BASE_URL: http://localhost:4001
 
     steps:
       - name: Check out repository
@@ -42,13 +45,25 @@ jobs:
         with:
           node-version: 22
 
+      - name: Set up Chrome and matching ChromeDriver
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v2.2.0
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+
+      - name: Verify Chrome and ChromeDriver
+        run: |
+          "${{ steps.setup-chrome.outputs.chrome-path }}" --version
+          "${{ steps.setup-chrome.outputs.chromedriver-path }}" --version
+
       - name: Install backend dependencies
         run: npm ci
 
       - name: Create database schema
         run: npm run db:schema
 
-      - name: Run backend automated tests
+      - name: Run API and unit automated tests
         run: npm test
 
       - name: Install frontend dependencies
@@ -59,3 +74,87 @@ jobs:
 
       - name: Check frontend lint
         run: npm run lint --prefix client
+
+      - name: Seed a fictitious product for Selenium tests
+        run: |
+          node <<'NODE'
+          const { Pool } = require('pg');
+
+          const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+          async function main() {
+            const result = await pool.query(
+              `INSERT INTO products (name, description, price, inventory_quantity)
+               VALUES ($1, $2, $3, $4)
+               RETURNING id, name, inventory_quantity`,
+              [
+                'P08 Selenium CI Product',
+                'Fictitious product created only for the P08 CI end-to-end tests',
+                19.99,
+                10
+              ]
+            );
+
+            console.log('Selenium fixture created:', result.rows[0]);
+          }
+
+          main()
+            .catch((error) => {
+              console.error('Could not seed Selenium fixture:', error);
+              process.exitCode = 1;
+            })
+            .finally(() => pool.end());
+          NODE
+
+      - name: Start backend for Selenium tests
+        run: |
+          npm start > backend.log 2>&1 &
+          echo $! > backend.pid
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:4001/health/db > /dev/null; then
+              echo "Backend is ready."
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Backend did not become ready. Backend log follows:"
+          cat backend.log
+          exit 1
+
+      - name: Start frontend for Selenium tests
+        run: |
+          echo "VITE_API_BASE_URL=http://localhost:4001" > client/.env.local
+          npm run dev --prefix client -- --host 0.0.0.0 > frontend.log 2>&1 &
+          echo $! > frontend.pid
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:5173/ > /dev/null; then
+              echo "Frontend is ready."
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Frontend did not become ready. Frontend log follows:"
+          cat frontend.log
+          exit 1
+
+      - name: Run Selenium end-to-end tests
+        env:
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.setup-chrome.outputs.chromedriver-path }}
+        run: npm run test:e2e
+
+      - name: Upload Selenium failure evidence and server logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p08-selenium-ci-failure
+          path: |
+            test-results/e2e/
+            backend.log
+            frontend.log
+          if-no-files-found: ignore
+          retention-days: 7

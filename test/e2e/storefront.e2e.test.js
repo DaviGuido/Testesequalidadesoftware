@@ -1,4 +1,5 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 const { assert } = require('chai');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -103,11 +104,39 @@ async function openCartThroughNavigation() {
   await driver.wait(until.elementLocated(By.css('.cart-page-shell')), 10000);
 }
 
+function buildChromeDriver() {
+  const options = new chrome.Options();
+
+  if (process.env.CI) {
+    options.addArguments(
+      '--headless=new',
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--window-size=1440,1000'
+    );
+
+    if (process.env.CHROME_BIN) {
+      options.setChromeBinaryPath(process.env.CHROME_BIN);
+    }
+  }
+
+  const builder = new Builder()
+    .forBrowser('chrome')
+    .setChromeOptions(options);
+
+  if (process.env.CHROMEDRIVER_PATH) {
+    builder.setChromeService(new chrome.ServiceBuilder(process.env.CHROMEDRIVER_PATH));
+  }
+
+  return builder.build();
+}
+
 describe('P08 - Selenium E2E (interface real)', function () {
   this.timeout(45000);
 
   beforeEach(async function () {
-    driver = await new Builder().forBrowser('chrome').build();
+    driver = await buildChromeDriver();
     await driver.manage().setTimeouts({ implicit: 0, pageLoad: 20000, script: 10000 });
   });
 
