@@ -75,6 +75,18 @@ describe('Checkout utility unit tests', () => {
     }, 'usd'));
   });
 
+      it('rejects a line item with a quantity that is not a positive integer', () => {
+    const invalidQuantities = [0, -1, 1.5, 'invalid', null, undefined];
+
+    invalidQuantities.forEach((quantity) => {
+      assert.isNull(createStripeLineItem({
+        name: 'Notebook',
+        price: '12.50',
+        quantity: quantity
+      }, 'usd'));
+    });
+  });
+
   it('maps every cart product into a Stripe line item', () => {
     const result = createStripeLineItems([
       { name: 'Pen', description: 'Blue pen', price: 2.5, quantity: 3 },
