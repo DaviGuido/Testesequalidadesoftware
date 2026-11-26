@@ -1,0 +1,236 @@
+﻿P11 - EVIDÊNCIAS DO CICLO TDD
+Projeto: NK-Forge Full-Stack E-Commerce App
+Repositório: https://github.com/DaviGuido/Testesequalidadesoftware
+Branch: p11-tdd-red-green-refactor
+
+REGRA EVOLUÍDA
+Validação da quantidade de produtos enviados para a criação de itens de checkout do Stripe. A quantidade deve ser um número inteiro positivo.
+
+1. ETAPA RED
+
+Foi criado um teste automatizado para verificar a rejeição de quantidades inválidas.
+
+Arquivo: test/unit/checkoutUtils.test.js
+
+Resultado da execução:
+9 passing
+1 failing
+
+Falha observada:
+O teste "rejects a line item when quantity is not a positive integer" falhou porque a implementação aceitava a quantidade 0.
+
+Commit:
+c27836f - test(checkout): reject invalid Stripe quantities (RED)
+
+2. ETAPA GREEN
+
+Foi implementada a validação da quantidade em createStripeLineItem(), rejeitando valores que não sejam números inteiros positivos.
+
+Arquivo: utils/checkoutUtils.js
+
+Resultado da execução:
+10 passing
+0 failing
+
+Commit:
+3750e0c - fix(checkout): reject invalid Stripe quantities (GREEN)
+
+3. ETAPA REFACTOR
+
+A validação de números inteiros positivos foi centralizada na função auxiliar isPositiveInteger(), reutilizada na validação do preço em centavos e da quantidade.
+
+Arquivo: utils/checkoutUtils.js
+
+Resultado da execução:
+10 passing
+0 failing
+
+Verificação adicional:
+git diff --check - sem problemas reportados.
+
+Commit:
+2cef9af - refactor(checkout): centralize positive integer validation (REFACTOR)
+
+4. PUBLICAÇÃO E INTEGRAÇÃO CONTÍNUA
+
+Branch:
+p11-tdd-red-green-refactor
+
+Os três commits foram enviados ao repositório remoto.
+
+O GitHub Actions executou o workflow "Quality checks #10" após a publicação do commit REFACTOR.
+
+Resultado observado:
+Execução concluída com sucesso (ícone verde).
+Tempo de execução exibido: 1 minuto e 19 segundos.
+
+5. HISTÓRICO DOS COMMITS
+
+c27836f - RED
+3750e0c - GREEN
+2cef9af - REFACTOR
+
+Observação:
+As capturas de tela das execuções e do histórico de commits devem ser mantidas junto às evidências desta etapa.
+
+6. LINHA DE BASE DA QUALIDADE - SONARQUBE
+
+Analise inicial realizada na branch master, commit 417cdaba.
+
+Resultados observados:
+- Seguranca: 8 problemas (classificacao E).
+- Confiabilidade: 6 problemas (classificacao C).
+- Manutenibilidade: 0 problemas (classificacao A).
+- Total: 14 problemas abertos e confirmados.
+- Duplicacao de codigo: 2,1%.
+- Esforco estimado de correcao: 3h55.
+- Cobertura de testes: indisponivel na analise automatica.
+- Quality Gate: Not computed.
+
+7. COMPARACAO DA ALTERACAO TDD
+
+Na analise do Pull Request #3, referente a branch p11-tdd-red-green-refactor:
+- Quality Gate: Passed.
+- Novos problemas: 0.
+- Problemas aceitos: 0.
+- Duplicacao nas novas linhas: 0,0%.
+- Cobertura nas novas linhas: indisponivel.
+
+Interpretacao:
+A alteracao realizada no ciclo TDD nao apresentou novos problemas
+detectados pelo SonarQube nas novas linhas analisadas. Os indicadores
+da linha de base representam problemas preexistentes e nao devem ser
+considerados corrigidos apenas pela aprovacao do Pull Request.
+
+Observacao:
+O SonarQube tambem apresentou um aviso de codificacao de arquivos
+durante a analise. A verificacao local dos arquivos versionados nao
+identificou sequencias UTF-8 invalidas. O aviso permanece registrado
+sem atribuicao de causa confirmada.
+8. PLANO DE MELHORIA CONTINUA
+
+Objetivo:
+Definir acoes priorizadas para tratar os problemas identificados na
+analise inicial do SonarQube, acompanhando sua resolucao por meio de
+novas analises e testes automatizados.
+
+Responsavel geral:
+Desenvolvedor responsavel pelo projeto.
+
+PRIORIDADE P1 - CRITICA
+
+Problema identificado:
+Client-Side Open Redirect via unsanitized user input.
+Arquivo: client/src/pages/CheckoutPage.jsx
+Localizacao indicada: linha 24.
+Classificacao: Security - Blocker.
+
+Acao planejada:
+Investigar a origem do destino de redirecionamento e implementar
+validacao que permita somente destinos confiaveis e esperados.
+
+Criterio de conclusao:
+O redirecionamento deve rejeitar destinos externos ou nao autorizados.
+Os testes automatizados devem cobrir destinos validos e invalidos.
+O SonarQube deve ser executado novamente para verificar o apontamento.
+
+PRIORIDADE P2 - ALTA
+
+Problema 1:
+Use full commit SHA hash for this dependency.
+Arquivo: .github/workflows/quality.yml
+Localizacao indicada: linha 50.
+Classificacao: Security - High.
+
+Acao planejada:
+Revisar a referencia da action utilizada no workflow e fixar sua versao
+por meio do SHA completo do commit correspondente.
+
+Criterio de conclusao:
+A referencia da dependencia deve utilizar um SHA completo e valido.
+O workflow deve continuar executando com sucesso no GitHub Actions.
+
+Problema 2:
+Client-Side Request Forgery via unsanitized user input.
+Arquivo: client/src/api/apiClient.js
+Localizacao indicada: linha 4.
+Classificacao: Security - High.
+
+Acao planejada:
+Investigar como URLs e destinos de requisicoes sao definidos.
+Restringir os destinos permitidos e validar entradas externas.
+
+Criterio de conclusao:
+As requisicoes devem utilizar destinos confiaveis e controlados.
+Testes devem verificar entradas validas e tentativas de uso de destinos
+nao autorizados.
+
+PRIORIDADE P3 - MEDIA
+
+Problemas identificados:
+- "PASSWORD" detected - .github/workflows/quality.yml, linha 19.
+- Omissao da opcao --ignore-scripts - quality.yml, linha 61.
+- Uso de npx - quality.yml, linha 70.
+- API Traversal - client/src/api/apiClient.js, linha 4.
+- Express version disclosure - app.js, linha 19.
+
+Acoes planejadas:
+Investigar o apontamento relacionado a senha para verificar se existe
+algum segredo exposto ou apenas uma ocorrencia textual.
+Revisar a instalacao de dependencias e avaliar o uso de --ignore-scripts.
+Revisar a execucao de ferramentas por npx e adotar uma forma controlada
+de execucao das dependencias.
+Investigar o apontamento de API Traversal e validar os caminhos e
+parametros utilizados nas requisicoes.
+Avaliar a exposicao da versao do Express e reduzir informacoes
+desnecessarias fornecidas nas respostas HTTP.
+
+Criterios de conclusao:
+Segredos nao devem estar expostos no codigo ou no historico do repositorio.
+A instalacao e execucao de dependencias devem seguir configuracao segura.
+Entradas e caminhos de requisicoes devem ser validados.
+Informacoes desnecessarias sobre a tecnologia do servidor nao devem
+ser divulgadas.
+Os apontamentos devem ser reavaliados pelo SonarQube.
+
+PRIORIDADE P4 - MEDIA
+
+Problemas de confiabilidade relacionados a Promises nao aguardadas
+ou nao tratadas:
+
+- client/src/pages/CartPage.jsx, linha 110.
+- client/src/pages/OAuthCallbackPage.jsx, linha 57.
+- client/src/pages/OrdersPage.jsx, linha 66.
+- client/src/pages/ProductDetailsPage.jsx, linha 79.
+- client/src/pages/ProductsPage.jsx, linha 71.
+- scripts/apply-schema.js, linha 22.
+
+Acao planejada:
+Revisar as operacoes assincronas identificadas, garantindo que as
+Promises sejam aguardadas ou tenham tratamento adequado de erros.
+Avaliar o comportamento em situacoes de sucesso e falha.
+
+Criterios de conclusao:
+As operacoes assincronas devem ter fluxo de execucao controlado.
+Erros devem ser tratados adequadamente.
+Testes automatizados devem verificar os cenarios relevantes.
+Uma nova analise do SonarQube deve confirmar a situacao dos apontamentos.
+
+ACOMPANHAMENTO E VALIDACAO
+
+As acoes serao acompanhadas por meio de:
+- Testes automatizados antes e depois das correcoes.
+- Execucao do workflow Quality checks no GitHub Actions.
+- Novas analises do SonarQube.
+- Comparacao dos problemas encontrados com a linha de base.
+- Registro dos commits e das evidencias de cada melhoria.
+
+As correcoes somente serao consideradas concluidas depois da
+implementacao, dos testes e da verificacao dos resultados.
+
+SITUACAO ATUAL DO PLANO
+
+As acoes acima representam um planejamento de melhoria continua.
+Os problemas identificados na linha de base ainda nao foram declarados
+como corrigidos. A alteracao realizada pelo ciclo TDD foi validada
+separadamente e apresentou zero novos problemas na analise do Pull Request.

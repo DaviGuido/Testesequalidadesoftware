@@ -19,12 +19,21 @@ function isValidUserId(userId) {
   return Number.isInteger(Number(userId));
 }
 
+function isPositiveInteger(value) {
+  return Number.isInteger(value) && value > 0;
+}
+
 function createStripeLineItem(item, currency) {
   const unitAmount = toStripeUnitAmount(item.price);
+  const quantity = Number(item.quantity);
 
-  if (!Number.isInteger(unitAmount) || unitAmount <= 0) {
-    return null;
-  }
+  if (!isPositiveInteger(unitAmount)) {
+  return null;
+}
+
+if (!isPositiveInteger(quantity)) {
+  return null;
+}
 
   return {
     price_data: {
@@ -35,7 +44,7 @@ function createStripeLineItem(item, currency) {
       },
       unit_amount: unitAmount
     },
-    quantity: Number(item.quantity)
+    quantity
   };
 }
 
