@@ -21,8 +21,13 @@ function isValidUserId(userId) {
 
 function createStripeLineItem(item, currency) {
   const unitAmount = toStripeUnitAmount(item.price);
+  const quantity = Number(item.quantity);
 
   if (!Number.isInteger(unitAmount) || unitAmount <= 0) {
+    return null;
+  }
+
+  if (!Number.isInteger(quantity) || quantity <= 0) {
     return null;
   }
 
@@ -35,7 +40,7 @@ function createStripeLineItem(item, currency) {
       },
       unit_amount: unitAmount
     },
-    quantity: Number(item.quantity)
+    quantity
   };
 }
 
