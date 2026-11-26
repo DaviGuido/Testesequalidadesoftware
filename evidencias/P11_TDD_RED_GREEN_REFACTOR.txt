@@ -72,3 +72,38 @@ c27836f - RED
 
 Observação:
 As capturas de tela das execuções e do histórico de commits devem ser mantidas junto às evidências desta etapa.
+
+6. LINHA DE BASE DA QUALIDADE - SONARQUBE
+
+Analise inicial realizada na branch master, commit 417cdaba.
+
+Resultados observados:
+- Seguranca: 8 problemas (classificacao E).
+- Confiabilidade: 6 problemas (classificacao C).
+- Manutenibilidade: 0 problemas (classificacao A).
+- Total: 14 problemas abertos e confirmados.
+- Duplicacao de codigo: 2,1%.
+- Esforco estimado de correcao: 3h55.
+- Cobertura de testes: indisponivel na analise automatica.
+- Quality Gate: Not computed.
+
+7. COMPARACAO DA ALTERACAO TDD
+
+Na analise do Pull Request #3, referente a branch p11-tdd-red-green-refactor:
+- Quality Gate: Passed.
+- Novos problemas: 0.
+- Problemas aceitos: 0.
+- Duplicacao nas novas linhas: 0,0%.
+- Cobertura nas novas linhas: indisponivel.
+
+Interpretacao:
+A alteracao realizada no ciclo TDD nao apresentou novos problemas
+detectados pelo SonarQube nas novas linhas analisadas. Os indicadores
+da linha de base representam problemas preexistentes e nao devem ser
+considerados corrigidos apenas pela aprovacao do Pull Request.
+
+Observacao:
+O SonarQube tambem apresentou um aviso de codificacao de arquivos
+durante a analise. A verificacao local dos arquivos versionados nao
+identificou sequencias UTF-8 invalidas. O aviso permanece registrado
+sem atribuicao de causa confirmada.
