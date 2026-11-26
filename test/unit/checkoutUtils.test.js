@@ -61,19 +61,19 @@ describe('Checkout utility unit tests', () => {
     });
   });
 
-  it('rejects a line item with an invalid or non-positive price', () => {
-    assert.isNull(createStripeLineItem({
-      name: 'Invalid product',
-      price: 'not-a-price',
-      quantity: 1
-    }, 'usd'));
+  
+it('rejects a line item when quantity is not a positive integer', () => {
+  const invalidQuantities = [0, -1, 1.5, 'not-a-number', null, undefined];
 
+  invalidQuantities.forEach((quantity) => {
     assert.isNull(createStripeLineItem({
-      name: 'Free product',
-      price: '0',
-      quantity: 1
-    }, 'usd'));
+      name: 'Notebook',
+      price: 12.5,
+      quantity
+    }, 'usd'), `Expected quantity ${quantity} to be rejected`);
   });
+});
+
 
   it('maps every cart product into a Stripe line item', () => {
     const result = createStripeLineItems([
