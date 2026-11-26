@@ -1,0 +1,74 @@
+﻿P11 - EVIDÊNCIAS DO CICLO TDD
+Projeto: NK-Forge Full-Stack E-Commerce App
+Repositório: https://github.com/DaviGuido/Testesequalidadesoftware
+Branch: p11-tdd-red-green-refactor
+
+REGRA EVOLUÍDA
+Validação da quantidade de produtos enviados para a criação de itens de checkout do Stripe. A quantidade deve ser um número inteiro positivo.
+
+1. ETAPA RED
+
+Foi criado um teste automatizado para verificar a rejeição de quantidades inválidas.
+
+Arquivo: test/unit/checkoutUtils.test.js
+
+Resultado da execução:
+9 passing
+1 failing
+
+Falha observada:
+O teste "rejects a line item when quantity is not a positive integer" falhou porque a implementação aceitava a quantidade 0.
+
+Commit:
+c27836f - test(checkout): reject invalid Stripe quantities (RED)
+
+2. ETAPA GREEN
+
+Foi implementada a validação da quantidade em createStripeLineItem(), rejeitando valores que não sejam números inteiros positivos.
+
+Arquivo: utils/checkoutUtils.js
+
+Resultado da execução:
+10 passing
+0 failing
+
+Commit:
+3750e0c - fix(checkout): reject invalid Stripe quantities (GREEN)
+
+3. ETAPA REFACTOR
+
+A validação de números inteiros positivos foi centralizada na função auxiliar isPositiveInteger(), reutilizada na validação do preço em centavos e da quantidade.
+
+Arquivo: utils/checkoutUtils.js
+
+Resultado da execução:
+10 passing
+0 failing
+
+Verificação adicional:
+git diff --check - sem problemas reportados.
+
+Commit:
+2cef9af - refactor(checkout): centralize positive integer validation (REFACTOR)
+
+4. PUBLICAÇÃO E INTEGRAÇÃO CONTÍNUA
+
+Branch:
+p11-tdd-red-green-refactor
+
+Os três commits foram enviados ao repositório remoto.
+
+O GitHub Actions executou o workflow "Quality checks #10" após a publicação do commit REFACTOR.
+
+Resultado observado:
+Execução concluída com sucesso (ícone verde).
+Tempo de execução exibido: 1 minuto e 19 segundos.
+
+5. HISTÓRICO DOS COMMITS
+
+c27836f - RED
+3750e0c - GREEN
+2cef9af - REFACTOR
+
+Observação:
+As capturas de tela das execuções e do histórico de commits devem ser mantidas junto às evidências desta etapa.
